@@ -3,11 +3,12 @@ import { BankrollProvider } from "@/lib/store";
 import { Dashboard } from "@/components/Dashboard";
 import { TransactionList } from "@/components/TransactionList";
 import { Settings } from "@/components/Settings";
-import { LayoutDashboard, History, Settings as SettingsIcon, Menu } from "lucide-react";
+import { Challenges } from "@/components/Challenges";
+import { LayoutDashboard, History, Settings as SettingsIcon, Menu, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function AppContent() {
-  const [view, setView] = useState<'dashboard' | 'history' | 'settings'>('dashboard');
+  const [view, setView] = useState<'dashboard' | 'history' | 'challenges' | 'settings'>('dashboard');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const NavItem = ({ id, icon: Icon, label }: { id: typeof view, icon: any, label: string }) => (
@@ -50,6 +51,7 @@ function AppContent() {
           <nav className="space-y-1 p-4">
             <NavItem id="dashboard" icon={LayoutDashboard} label="Dashboard" />
             <NavItem id="history" icon={History} label="Histórico" />
+            <NavItem id="challenges" icon={Target} label="Desafios" />
             <NavItem id="settings" icon={SettingsIcon} label="Configurações" />
           </nav>
           
@@ -72,6 +74,7 @@ function AppContent() {
           <div className="mx-auto max-w-7xl">
             {view === 'dashboard' && <Dashboard />}
             {view === 'history' && <TransactionList />}
+            {view === 'challenges' && <Challenges />}
             {view === 'settings' && <Settings />}
           </div>
         </main>
