@@ -58,6 +58,7 @@ interface BankrollContextType {
   updateChallengeDay: (challengeId: string, day: number, result: ChallengeDayResult, doubleNextStake?: boolean) => void;
   restartChallenge: (challengeId: string) => void;
   deleteChallenge: (challengeId: string) => void;
+  importData: (data: BankrollState) => void;
 }
 
 const BankrollContext = createContext<BankrollContextType | undefined>(undefined);
@@ -123,6 +124,18 @@ export function BankrollProvider({ children }: { children: React.ReactNode }) {
 
   const resetData = () => {
     setState(DEFAULT_STATE);
+  };
+
+  const importData = (data: BankrollState) => {
+    if (data && typeof data.initialBankroll === 'number' && Array.isArray(data.transactions)) {
+      setState({
+        initialBankroll: data.initialBankroll,
+        transactions: data.transactions,
+        challenges: data.challenges || [],
+      });
+    } else {
+      throw new Error("Formato de dados inválido");
+    }
   };
 
   const addChallenge = (challengeData: Omit<Challenge, 'id' | 'status' | 'days'>) => {
@@ -280,6 +293,7 @@ export function BankrollProvider({ children }: { children: React.ReactNode }) {
         updateChallengeDay,
         restartChallenge,
         deleteChallenge,
+        importData,
       }}
     >
       {children}
