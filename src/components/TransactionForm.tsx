@@ -1,32 +1,39 @@
 import React, { useState } from "react";
-import { useBankroll, TransactionType, BetResult } from "@/lib/store";
+import { useBankroll, TransactionType, BetResult, Transaction } from "@/lib/store";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { X } from "lucide-react";
 
 interface TransactionFormProps {
   onClose: () => void;
+  initialData?: Transaction;
 }
 
-export function TransactionForm({ onClose }: TransactionFormProps) {
-  const { addTransaction } = useBankroll();
-  const [type, setType] = useState<TransactionType>("bet");
-  const [description, setDescription] = useState("");
-  const [stake, setStake] = useState("");
-  const [odds, setOdds] = useState("");
-  const [result, setResult] = useState<BetResult>("pending");
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+export function TransactionForm({ onClose, initialData }: TransactionFormProps) {
+  const { addTransaction, updateTransaction } = useBankroll();
+  const [type, setType] = useState<TransactionType>(initialData?.type || "bet");
+  const [description, setDescription] = useState(initialData?.description || "");
+  const [stake, setStake] = useState(initialData?.stake.toString() || "");
+  const [odds, setOdds] = useState(initialData?.odds?.toString() || "");
+  const [result, setResult] = useState<BetResult>(initialData?.result || "pending");
+  const [date, setDate] = useState(initialData ? new Date(initialData.date).toISOString().split("T")[0] : new Date().toISOString().split("T")[0]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addTransaction({
+    const txData = {
       type,
       description,
       stake: parseFloat(stake),
       odds: type === "bet" ? parseFloat(odds) : 1,
-      result: type === "bet" ? result : "void", // void/irrelevant for deposit
+      result: type === "bet" ? result : "void",
       date,
-    });
+    };
+
+    if (initialData) {
+      updateTransaction(initialData.id, txData);
+    } else {
+      addTransaction(txData);
+    }
     onClose();
   };
 
@@ -34,7 +41,9 @@ export function TransactionForm({ onClose }: TransactionFormProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
       <div className="w-full max-w-md rounded-xl border border-zinc-800 bg-zinc-900 p-6 shadow-xl">
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-zinc-100">Nova Transação</h2>
+          <h2 className="text-lg font-semibold text-zinc-100">
+            {initialData ? "Editar Transação" : "Nova Transação"}
+          </h2>
           <button onClick={onClose} className="text-zinc-400 hover:text-white">
             <X className="h-5 w-5" />
           </button>
@@ -47,10 +56,11 @@ export function TransactionForm({ onClose }: TransactionFormProps) {
                 key={t}
                 type="button"
                 onClick={() => setType(t)}
+                disabled={!!initialData} // Prevent changing type when editing
                 className={`rounded-md border px-3 py-2 text-sm font-medium capitalize transition-colors ${
                   type === t
                     ? "border-indigo-500 bg-indigo-500/10 text-indigo-400"
-                    : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:bg-zinc-800"
+                    : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 }`}
               >
                 {t === "bet" ? "Aposta" : t === "deposit" ? "Depósito" : "Saque"}
