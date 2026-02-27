@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils";
 import { TransactionForm } from "@/components/TransactionForm";
 
 export function TransactionList() {
-  const { state, deleteTransaction, updateTransaction } = useBankroll();
+  const { activeBankroll, deleteTransaction, updateTransaction } = useBankroll();
   const [filter, setFilter] = useState<'all' | 'win' | 'loss' | 'pending'>('all');
   const [editingTx, setEditingTx] = useState<Transaction | null>(null);
 
-  const filteredTransactions = state.transactions.filter(tx => {
+  const filteredTransactions = activeBankroll.transactions.filter(tx => {
     if (filter === 'all') return true;
     if (tx.type !== 'bet') return false;
     return tx.result === filter;

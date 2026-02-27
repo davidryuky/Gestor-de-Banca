@@ -8,11 +8,11 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { cn } from "@/lib/utils";
 
 export function Challenges() {
-  const { state, addChallenge, deleteChallenge, updateChallengeDay, restartChallenge } = useBankroll();
+  const { activeBankroll, addChallenge, deleteChallenge, updateChallengeDay, restartChallenge } = useBankroll();
   const [isCreating, setIsCreating] = useState(false);
   const [selectedChallengeId, setSelectedChallengeId] = useState<string | null>(null);
 
-  const challenges = state.challenges || [];
+  const challenges = activeBankroll.challenges || [];
   const selectedChallenge = challenges.find(c => c.id === selectedChallengeId);
 
   if (isCreating) {
