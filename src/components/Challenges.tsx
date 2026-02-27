@@ -6,6 +6,7 @@ import { formatCurrency } from "@/lib/utils";
 import { Plus, Trash2, ArrowLeft, TrendingUp, RotateCcw, ShieldAlert, CheckCircle2, XCircle, MinusCircle } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export function Challenges() {
   const { activeBankroll, addChallenge, deleteChallenge, updateChallengeDay, restartChallenge } = useBankroll();
@@ -19,6 +20,7 @@ export function Challenges() {
     return <CreateChallengeForm onCancel={() => setIsCreating(false)} onSubmit={(data) => {
       addChallenge(data);
       setIsCreating(false);
+      toast.success("Desafio criado com sucesso!");
     }} />;
   }
 
@@ -56,7 +58,10 @@ export function Challenges() {
                 className="absolute top-4 right-4 text-zinc-500 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (confirm('Excluir desafio?')) deleteChallenge(challenge.id);
+                  if (confirm('Excluir desafio?')) {
+                    deleteChallenge(challenge.id);
+                    toast.success("Desafio excluído!");
+                  }
                 }}
               >
                 <Trash2 className="h-4 w-4" />
@@ -206,6 +211,7 @@ function ChallengeDetail({
       setLossModalDay(dayNumber);
     } else {
       onUpdateDay(dayNumber, result, false);
+      toast.success(`Resultado do dia ${dayNumber} atualizado!`);
     }
   };
 
@@ -213,6 +219,7 @@ function ChallengeDetail({
     if (lossModalDay !== null) {
       onUpdateDay(lossModalDay, 'loss', double);
       setLossModalDay(null);
+      toast.success(`Resultado atualizado. ${double ? 'Aposta do próximo dia dobrada.' : ''}`);
     }
   };
 
@@ -255,7 +262,10 @@ function ChallengeDetail({
         </div>
         
         <Button variant="outline" onClick={() => {
-          if (confirm('Deseja reiniciar este desafio do zero?')) onRestart();
+          if (confirm('Deseja reiniciar este desafio do zero?')) {
+            onRestart();
+            toast.success("Desafio reiniciado!");
+          }
         }}>
           <RotateCcw className="h-4 w-4 mr-2" />
           Reiniciar Desafio

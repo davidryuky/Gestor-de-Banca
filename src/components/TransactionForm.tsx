@@ -3,6 +3,7 @@ import { useBankroll, TransactionType, BetResult, Transaction } from "@/lib/stor
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { X } from "lucide-react";
+import { toast } from "sonner";
 
 interface TransactionFormProps {
   onClose: () => void;
@@ -31,8 +32,10 @@ export function TransactionForm({ onClose, initialData }: TransactionFormProps) 
 
     if (initialData) {
       updateTransaction(initialData.id, txData);
+      toast.success("Transação atualizada com sucesso!");
     } else {
       addTransaction(txData);
+      toast.success("Transação adicionada com sucesso!");
     }
     onClose();
   };

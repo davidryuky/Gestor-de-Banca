@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useState, useRef } from "react";
 import { AlertTriangle, Download, Upload, Plus, Trash2, Edit2, Check, X } from "lucide-react";
+import { toast } from "sonner";
 
 export function Settings() {
   const { 
@@ -29,7 +30,7 @@ export function Settings() {
     const val = parseFloat(initial);
     if (!isNaN(val)) {
       setInitialBankroll(val);
-      alert("Banca inicial atualizada!");
+      toast.success("Banca inicial atualizada!");
     }
   };
 
@@ -38,6 +39,7 @@ export function Settings() {
       createBankroll(newBankrollName, parseFloat(newBankrollInitial));
       setNewBankrollName("");
       setNewBankrollInitial("1000");
+      toast.success("Nova banca criada com sucesso!");
     }
   };
 
@@ -50,6 +52,7 @@ export function Settings() {
     if (editingBankrollId && editingBankrollName.trim()) {
       updateBankrollName(editingBankrollId, editingBankrollName.trim());
       setEditingBankrollId(null);
+      toast.success("Nome da banca atualizado!");
     }
   };
 
@@ -61,6 +64,7 @@ export function Settings() {
   const handleReset = () => {
     if (confirm("Tem certeza? Isso apagará TODOS os dados de TODAS as bancas.")) {
       resetData();
+      toast.success("Todos os dados foram resetados.");
     }
   };
 
@@ -90,11 +94,11 @@ export function Settings() {
       try {
         const json = JSON.parse(event.target?.result as string);
         importData(json);
-        alert("Dados importados com sucesso!");
+        toast.success("Dados importados com sucesso!");
         if (fileInputRef.current) fileInputRef.current.value = "";
       } catch (error) {
         console.error("Erro ao importar dados:", error);
-        alert("Erro ao importar arquivo. Certifique-se de que é um arquivo JSON válido do Gestão de Banca.");
+        toast.error("Erro ao importar arquivo. Certifique-se de que é um arquivo JSON válido do Gestão de Banca.");
       }
     };
     reader.readAsText(file);

@@ -6,6 +6,8 @@ import { Settings } from "@/components/Settings";
 import { Challenges } from "@/components/Challenges";
 import { LayoutDashboard, History, Settings as SettingsIcon, Menu, Target, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Toaster } from "sonner";
+import { AnimatePresence, motion } from "motion/react";
 
 function AppContent() {
   const { state, activeBankroll, switchBankroll } = useBankroll();
@@ -32,6 +34,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans selection:bg-primary-500/30 transition-colors duration-200">
+      <Toaster position="top-right" theme={state.theme} />
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md sticky top-0 z-40">
         <span className="font-bold text-lg tracking-tight">GestãoPro</span>
@@ -91,11 +94,21 @@ function AppContent() {
 
         {/* Main Content */}
         <main className="flex-1 min-w-0 overflow-auto h-screen">
-          <div className="mx-auto max-w-7xl">
-            {view === 'dashboard' && <Dashboard />}
-            {view === 'history' && <TransactionList />}
-            {view === 'challenges' && <Challenges />}
-            {view === 'settings' && <Settings />}
+          <div className="mx-auto max-w-7xl relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={view}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                {view === 'dashboard' && <Dashboard />}
+                {view === 'history' && <TransactionList />}
+                {view === 'challenges' && <Challenges />}
+                {view === 'settings' && <Settings />}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </main>
       </div>

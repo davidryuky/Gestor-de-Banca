@@ -1,15 +1,18 @@
 import { useBankroll, Transaction, BetResult } from "@/lib/store";
 import { formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
-import { Trash2, Edit2 } from "lucide-react";
+import { Trash2, Edit2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { TransactionForm } from "@/components/TransactionForm";
+import { toast } from "sonner";
 
 export function TransactionList() {
   const { activeBankroll, deleteTransaction, updateTransaction } = useBankroll();
   const [filter, setFilter] = useState<'all' | 'win' | 'loss' | 'pending'>('all');
   const [editingTx, setEditingTx] = useState<Transaction | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
   const filteredTransactions = activeBankroll.transactions.filter(tx => {
     if (filter === 'all') return true;
@@ -17,8 +20,15 @@ export function TransactionList() {
     return tx.result === filter;
   });
 
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+  const paginatedTransactions = filteredTransactions.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const handleQuickResultChange = (id: string, newResult: BetResult) => {
     updateTransaction(id, { result: newResult });
+    toast.success("Resultado atualizado!");
   };
 
   return (
@@ -56,7 +66,7 @@ export function TransactionList() {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800">
-              {filteredTransactions.map((tx) => (
+              {paginatedTransactions.map((tx) => (
                 <tr key={tx.id} className="hover:bg-zinc-800/50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     {new Date(tx.date).toLocaleDateString('pt-BR')}
@@ -116,6 +126,7 @@ export function TransactionList() {
                         onClick={() => {
                           if (confirm("Tem certeza que deseja excluir esta transação?")) {
                             deleteTransaction(tx.id);
+                            toast.success("Transação excluída!");
                           }
                         }}
                         className="text-zinc-500 hover:text-rose-500 transition-colors p-1"
@@ -137,6 +148,32 @@ export function TransactionList() {
             </tbody>
           </table>
         </div>
+        
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-6 py-3 border-t border-zinc-800 bg-zinc-900/50">
+            <span className="text-sm text-zinc-400">
+              Página {currentPage} de {totalPages}
+            </span>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {editingTx && (
