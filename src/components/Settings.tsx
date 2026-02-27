@@ -122,18 +122,51 @@ export function Settings() {
 
         <div className="space-y-3 pt-2">
           <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Cor Principal</label>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button 
               onClick={() => setColorScheme('indigo')}
               className={`w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center ${state.colorScheme === 'indigo' ? 'ring-2 ring-offset-2 ring-indigo-500 dark:ring-offset-zinc-900' : ''}`}
+              title="Indigo"
+            />
+            <button 
+              onClick={() => setColorScheme('blue')}
+              className={`w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center ${state.colorScheme === 'blue' ? 'ring-2 ring-offset-2 ring-blue-500 dark:ring-offset-zinc-900' : ''}`}
+              title="Azul"
+            />
+            <button 
+              onClick={() => setColorScheme('cyan')}
+              className={`w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center ${state.colorScheme === 'cyan' ? 'ring-2 ring-offset-2 ring-cyan-500 dark:ring-offset-zinc-900' : ''}`}
+              title="Ciano"
             />
             <button 
               onClick={() => setColorScheme('emerald')}
               className={`w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center ${state.colorScheme === 'emerald' ? 'ring-2 ring-offset-2 ring-emerald-500 dark:ring-offset-zinc-900' : ''}`}
+              title="Esmeralda"
+            />
+            <button 
+              onClick={() => setColorScheme('amber')}
+              className={`w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center ${state.colorScheme === 'amber' ? 'ring-2 ring-offset-2 ring-amber-500 dark:ring-offset-zinc-900' : ''}`}
+              title="Âmbar"
+            />
+            <button 
+              onClick={() => setColorScheme('orange')}
+              className={`w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center ${state.colorScheme === 'orange' ? 'ring-2 ring-offset-2 ring-orange-500 dark:ring-offset-zinc-900' : ''}`}
+              title="Laranja"
             />
             <button 
               onClick={() => setColorScheme('rose')}
               className={`w-8 h-8 rounded-full bg-rose-500 flex items-center justify-center ${state.colorScheme === 'rose' ? 'ring-2 ring-offset-2 ring-rose-500 dark:ring-offset-zinc-900' : ''}`}
+              title="Rosa"
+            />
+            <button 
+              onClick={() => setColorScheme('fuchsia')}
+              className={`w-8 h-8 rounded-full bg-fuchsia-500 flex items-center justify-center ${state.colorScheme === 'fuchsia' ? 'ring-2 ring-offset-2 ring-fuchsia-500 dark:ring-offset-zinc-900' : ''}`}
+              title="Fúcsia"
+            />
+            <button 
+              onClick={() => setColorScheme('violet')}
+              className={`w-8 h-8 rounded-full bg-violet-500 flex items-center justify-center ${state.colorScheme === 'violet' ? 'ring-2 ring-offset-2 ring-violet-500 dark:ring-offset-zinc-900' : ''}`}
+              title="Violeta"
             />
           </div>
         </div>

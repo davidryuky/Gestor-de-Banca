@@ -48,7 +48,7 @@ export interface AppState {
   activeBankrollId: string;
   bankrolls: Bankroll[];
   theme: 'dark' | 'light';
-  colorScheme: 'indigo' | 'emerald' | 'rose';
+  colorScheme: 'indigo' | 'emerald' | 'rose' | 'blue' | 'violet' | 'amber' | 'cyan' | 'fuchsia' | 'orange';
   dashboardLayout: string[];
 }
 
@@ -62,7 +62,7 @@ interface BankrollContextType {
   
   // App Settings
   setTheme: (theme: 'dark' | 'light') => void;
-  setColorScheme: (color: 'indigo' | 'emerald' | 'rose') => void;
+  setColorScheme: (color: 'indigo' | 'emerald' | 'rose' | 'blue' | 'violet' | 'amber' | 'cyan' | 'fuchsia' | 'orange') => void;
   setDashboardLayout: (layout: string[]) => void;
   
   // Bankroll Management
@@ -160,7 +160,7 @@ export function BankrollProvider({ children }: { children: React.ReactNode }) {
     }
     
     // Apply color scheme
-    document.documentElement.classList.remove('theme-indigo', 'theme-emerald', 'theme-rose');
+    document.documentElement.classList.remove('theme-indigo', 'theme-emerald', 'theme-rose', 'theme-blue', 'theme-violet', 'theme-amber', 'theme-cyan', 'theme-fuchsia', 'theme-orange');
     document.documentElement.classList.add(`theme-${state.colorScheme}`);
     
   }, [state]);
@@ -169,7 +169,7 @@ export function BankrollProvider({ children }: { children: React.ReactNode }) {
 
   // --- Settings ---
   const setTheme = (theme: 'dark' | 'light') => setState(s => ({ ...s, theme }));
-  const setColorScheme = (colorScheme: 'indigo' | 'emerald' | 'rose') => setState(s => ({ ...s, colorScheme }));
+  const setColorScheme = (colorScheme: AppState['colorScheme']) => setState(s => ({ ...s, colorScheme }));
   const setDashboardLayout = (dashboardLayout: string[]) => setState(s => ({ ...s, dashboardLayout }));
 
   // --- Bankroll Management ---
