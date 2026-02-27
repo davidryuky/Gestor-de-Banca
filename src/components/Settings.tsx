@@ -2,7 +2,7 @@ import { useBankroll } from "@/lib/store";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useState, useRef } from "react";
-import { AlertTriangle, Download, Upload, Plus, Trash2 } from "lucide-react";
+import { AlertTriangle, Download, Upload, Plus, Trash2, Edit2, Check, X } from "lucide-react";
 
 export function Settings() {
   const { 
@@ -21,6 +21,8 @@ export function Settings() {
   const [initial, setInitial] = useState(activeBankroll.initialBankroll.toString());
   const [newBankrollName, setNewBankrollName] = useState("");
   const [newBankrollInitial, setNewBankrollInitial] = useState("1000");
+  const [editingBankrollId, setEditingBankrollId] = useState<string | null>(null);
+  const [editingBankrollName, setEditingBankrollName] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSaveInitial = () => {
@@ -37,6 +39,23 @@ export function Settings() {
       setNewBankrollName("");
       setNewBankrollInitial("1000");
     }
+  };
+
+  const startEditingBankroll = (id: string, name: string) => {
+    setEditingBankrollId(id);
+    setEditingBankrollName(name);
+  };
+
+  const saveEditingBankroll = () => {
+    if (editingBankrollId && editingBankrollName.trim()) {
+      updateBankrollName(editingBankrollId, editingBankrollName.trim());
+      setEditingBankrollId(null);
+    }
+  };
+
+  const cancelEditingBankroll = () => {
+    setEditingBankrollId(null);
+    setEditingBankrollName("");
   };
 
   const handleReset = () => {
@@ -142,11 +161,37 @@ export function Settings() {
         <div className="space-y-2">
           {state.bankrolls.map(b => (
             <div key={b.id} className="flex items-center justify-between p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
-              <div>
-                <p className="font-medium text-zinc-900 dark:text-zinc-100">{b.name}</p>
-                <p className="text-xs text-zinc-500">Inicial: R$ {b.initialBankroll}</p>
-              </div>
-              {state.bankrolls.length > 1 && (
+              {editingBankrollId === b.id ? (
+                <div className="flex-1 flex items-center gap-2 mr-4">
+                  <Input 
+                    value={editingBankrollName}
+                    onChange={(e) => setEditingBankrollName(e.target.value)}
+                    className="h-8"
+                    autoFocus
+                  />
+                  <button onClick={saveEditingBankroll} className="p-1 text-emerald-500 hover:bg-emerald-500/10 rounded">
+                    <Check className="h-4 w-4" />
+                  </button>
+                  <button onClick={cancelEditingBankroll} className="p-1 text-zinc-400 hover:bg-zinc-500/10 rounded">
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium text-zinc-900 dark:text-zinc-100">{b.name}</p>
+                    <button 
+                      onClick={() => startEditingBankroll(b.id, b.name)}
+                      className="text-zinc-400 hover:text-primary-500"
+                    >
+                      <Edit2 className="h-3 w-3" />
+                    </button>
+                  </div>
+                  <p className="text-xs text-zinc-500">Inicial: R$ {b.initialBankroll}</p>
+                </div>
+              )}
+              
+              {state.bankrolls.length > 1 && editingBankrollId !== b.id && (
                 <button 
                   onClick={() => {
                     if (confirm(`Excluir a banca "${b.name}"?`)) deleteBankroll(b.id);
