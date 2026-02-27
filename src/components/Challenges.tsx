@@ -346,17 +346,21 @@ function ChallengeDetail({
 
                 <div className="flex items-center gap-2">
                   {isPast ? (
-                    <div className={cn(
-                      "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium uppercase",
-                      day.result === 'win' ? "bg-emerald-500/20 text-emerald-400" :
-                      day.result === 'loss' ? "bg-rose-500/20 text-rose-400" :
-                      "bg-zinc-500/20 text-zinc-400"
-                    )}>
-                      {day.result === 'win' && <CheckCircle2 className="h-3.5 w-3.5" />}
-                      {day.result === 'loss' && <XCircle className="h-3.5 w-3.5" />}
-                      {day.result === 'void' && <MinusCircle className="h-3.5 w-3.5" />}
-                      {day.result === 'win' ? 'Green' : day.result === 'loss' ? 'Red' : 'Anulada'}
-                    </div>
+                    <select
+                      value={day.result}
+                      onChange={(e) => handleResult(day.day, e.target.value as ChallengeDayResult)}
+                      className={cn(
+                        "bg-transparent border rounded-md px-2 py-1 text-xs font-medium focus:outline-none focus:ring-1 cursor-pointer",
+                        day.result === 'win' ? "text-emerald-500 border-emerald-500/30 focus:ring-emerald-500" : 
+                        day.result === 'loss' ? "text-rose-500 border-rose-500/30 focus:ring-rose-500" : 
+                        "text-zinc-400 border-zinc-600 focus:ring-zinc-500"
+                      )}
+                    >
+                      <option value="win" className="bg-zinc-900 text-emerald-500">Green</option>
+                      <option value="loss" className="bg-zinc-900 text-rose-500">Red</option>
+                      <option value="void" className="bg-zinc-900 text-zinc-400">Anulada</option>
+                      <option value="pending" className="bg-zinc-900 text-yellow-500">Pendente</option>
+                    </select>
                   ) : isCurrent && challenge.status === 'active' ? (
                     <div className="flex gap-2">
                       <Button size="sm" variant="outline" className="border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/10" onClick={() => handleResult(day.day, 'win')}>

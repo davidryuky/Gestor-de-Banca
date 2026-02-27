@@ -10,6 +10,7 @@ export interface ChallengeDay {
   stake: number;
   targetOdds: number;
   result: ChallengeDayResult;
+  doubled?: boolean;
 }
 
 export interface Challenge {
@@ -313,35 +314,45 @@ export function BankrollProvider({ children }: { children: React.ReactNode }) {
         
         if (dayIndex === -1) return b;
 
-        days[dayIndex] = { ...days[dayIndex], result };
+        days[dayIndex] = { 
+          ...days[dayIndex], 
+          result,
+          doubled: result === 'loss' ? doubleNextStake : undefined
+        };
 
-        if (result === 'win' || result === 'void') {
-          let currentStake = result === 'win' ? days[dayIndex].stake * days[dayIndex].targetOdds : days[dayIndex].stake;
-          for (let i = dayIndex + 1; i < days.length; i++) {
-            days[i] = { ...days[i], stake: currentStake };
+        // Recalculate all stakes and status from day 0
+        let currentStake = challenge.initialStake;
+        let newStatus: 'active' | 'completed' | 'failed' = 'active';
+
+        for (let i = 0; i < days.length; i++) {
+          days[i] = { ...days[i], stake: currentStake };
+          
+          if (days[i].result === 'win') {
             currentStake = currentStake * days[i].targetOdds;
-          }
-        } else if (result === 'loss') {
-          if (doubleNextStake && dayIndex + 1 < days.length) {
-            let currentStake = days[dayIndex].stake * 2;
-            for (let i = dayIndex + 1; i < days.length; i++) {
-              days[i] = { ...days[i], stake: currentStake };
-              currentStake = currentStake * days[i].targetOdds;
+          } else if (days[i].result === 'void') {
+            // stake stays same
+          } else if (days[i].result === 'loss') {
+            if (days[i].doubled) {
+              currentStake = currentStake * 2;
+            } else {
+              newStatus = 'failed';
+              currentStake = currentStake * days[i].targetOdds; // projected for UI
             }
-            challenge.status = 'active';
-          } else {
-            challenge.status = 'failed';
+          } else if (days[i].result === 'pending') {
+            currentStake = currentStake * days[i].targetOdds;
           }
         }
 
-        const allSettled = days.every(d => d.result !== 'pending');
-        const anyLoss = days.some(d => d.result === 'loss');
-        
-        if (allSettled && !anyLoss) {
-          challenge.status = 'completed';
+        if (newStatus !== 'failed') {
+          const allSettled = days.every(d => d.result !== 'pending');
+          if (allSettled) {
+            newStatus = 'completed';
+          }
         }
 
         challenge.days = days;
+        challenge.status = newStatus;
+        
         const newChallenges = [...challenges];
         newChallenges[challengeIndex] = challenge;
 
